@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Custom 9:16 Audio Page</title>
+    <style>
+        /* Основной стиль страницы */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f3f4f6;
+            overflow: hidden;
+        }
+
+        /* Контейнер в формате 9:16 */
+        .container {
+            position: relative;
+            width: 56.25vmin; /* Соотношение 9:16 */
+            height: 100vmin;
+            background: url('img/asw.png') no-repeat center center; /* Добавляем фон */
+            background-size: cover;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        /* Контейнер для иконки Telegram */
+        .icon-container {
+            position: absolute;
+            top: 4%; /* Настраиваем позицию иконки выше центра */
+            left: 49%; /* Центрируем по горизонтали */
+            transform: translateX(-50%);
+        }
+
+        .icon {
+            width: 45%; /* Размер иконки */
+            height: 45%;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .icon:hover {
+            transform: scale(1.2);
+        }
+
+        /* Кастомный дизайн аудиоплеера */
+        .audio-container {
+            position: absolute;
+            bottom: 10%; /* Настраиваем позицию аудиоплеера ниже центра */
+            left: 50%; /* Центрируем по горизонтали */
+            transform: translateX(-50%);
+            text-align: center;
+        }
+
+        .custom-audio {
+            position: relative;
+            width: 80%;
+            background-color: #007bff;
+            border-radius: 10px;
+            padding: 10px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .play-pause-button {
+            font-size: 18px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: #fff;
+        }
+
+        .progress-bar {
+            flex-grow: 1;
+            height: 5px;
+            background-color: #ffffff66;
+            margin: 0 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .progress-bar-inner {
+            height: 100%;
+            width: 0;
+            background-color: #ffcc00;
+            border-radius: 5px;
+        }
+
+        .time-display {
+            font-size: 14px;
+            font-family: Arial, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Иконка Telegram (добавьте свою) -->
+        <div class="icon-container">
+            <img src="img/tg.png" alt="Telegram Icon" class="icon" onclick="openTelegram()">
+        </div>
+
+        <!-- Кастомный аудиоплеер -->
+        <div class="audio-container">
+            <div class="custom-audio">
+                <button class="play-pause-button" onclick="togglePlay()">▶️</button>
+                <div class="progress-bar" onclick="seekAudio(event)">
+                    <div class="progress-bar-inner" id="progress-bar-inner"></div>
+                </div>
+                <span class="time-display" id="time-display">0:00</span>
+            </div>
+            <audio id="audio-player" src="audio/aw1.mp3" preload="auto"></audio>
+        </div>
+    </div>
+
+    <script>
+        // Ссылка на Telegram канал
+        function openTelegram() {
+            window.open("https://t.me/dzhamalik17", "_blank");
+        }
+
+        const audioPlayer = document.getElementById("audio-player");
+        const playPauseButton = document.querySelector(".play-pause-button");
+        const progressBarInner = document.getElementById("progress-bar-inner");
+        const timeDisplay = document.getElementById("time-display");
+
+        // Переключение воспроизведения и паузы
+        function togglePlay() {
+            if (audioPlayer.paused) {
+                audioPlayer.play();
+                playPauseButton.textContent = "⏸️";
+            } else {
+                audioPlayer.pause();
+                playPauseButton.textContent = "▶️";
+            }
+        }
+
+        // Обновление прогресса аудио
+        audioPlayer.addEventListener("timeupdate", () => {
+            const progressPercent = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+            progressBarInner.style.width = `${progressPercent}%`;
+            const minutes = Math.floor(audioPlayer.currentTime / 60);
+            const seconds = Math.floor(audioPlayer.currentTime % 60).toString().padStart(2, "0");
+            timeDisplay.textContent = `${minutes}:${seconds}`;
+        });
+
+        // Перемотка по клику на полосу прогресса
+        function seekAudio(event) {
+            const progressBar = event.currentTarget;
+            const clickPosition = event.offsetX / progressBar.offsetWidth;
+            audioPlayer.currentTime = clickPosition * audioPlayer.duration;
+        }
+    </script>
+</body>
+</html>
